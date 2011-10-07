@@ -5,7 +5,6 @@ import os.path
 import argparse
 import time
 import subprocess
-from ConfigParser import ConfigParser
 from github2.client import Github
 
 __here__ = os.path.dirname(__file__)
@@ -19,11 +18,9 @@ def play_audio(filename):
 
 
 def github_client():
-    config = ConfigParser()
-    config.read(os.path.join(os.getenv('HOME'), '.gitconfig'))
-    return Github(username=config.get('github', 'user'),
-                  api_token=config.get('github', 'token'),
-                  requests_per_second=1)
+    user = subprocess.check_output(['git', 'config', 'github.user']).strip()
+    token = subprocess.check_output(['git', 'config', 'github.token']).strip()
+    return Github(username=user, api_token=token, requests_per_second=1)
 
 
 class IssueWatcher(object):
